@@ -35,6 +35,20 @@ class ApiClientV4
     const COUNT_SCHEDULED_MAILINGS = 8;
     const COUNT_TEMPLATES = 9;
 
+    // Add members batches relation types
+    const BATCH_RELATION_ACTIVE_CLIENT = "active-clients";
+    const BATCH_RELATION_ASSOCIATION_MEMBERS = "association-members";
+    const BATCH_RELATION_BUSINESS_CARD = "business-card";
+    const BATCH_RELATION_CONTEST_PARTICIPANT = "contest-participants";
+    const BATCH_RELATION_EMPLOYEES = "employees";
+    const BATCH_RELATION_EXPRESS_CONSENT = "express-consent";
+    const BATCH_RELATION_INACTIVE_CLIENTS = "inactive-clients";
+    const BATCH_RELATION_INFORMATION_REQUEST = "information-request";
+    const BATCH_RELATION_MIXED_LIST = "mixed-list";
+    const BATCH_RELATION_PARTNERS = "partners";
+    const BATCH_RELATION_PURCHASED_LIST = "purchased-list";
+    const BATCH_RELATION_WEB_CONTACTS = "web-contacts";
+
     private $user;
     private $password;
     private $method;
@@ -233,12 +247,9 @@ class ApiClientV4
 
     }
 
-    public function getMember($key)
-    {
-
-        return $this->send('GET', 'members/' . $key);
-
-    }
+    /* -------
+    ------- MEMBERS
+    ------- */
 
     public function getMembers($page = 1, $limit = 100, $sort = 'email_asc')
     {
@@ -253,102 +264,10 @@ class ApiClientV4
 
     }
 
-    public function getMemberGroups($key, $page = 1, $limit = 100, $sort = 'title_asc')
+    public function getMember($key)
     {
 
-        $params = array(
-            'page' => $page,
-            'limit' => $limit,
-            'sort' => $sort
-        );
-
-        return $this->send('GET', 'members/' . $key . '/groups', $params);
-
-    }
-
-    public function editMember($key, array $params)
-    {
-
-        return $this->send('PATCH', 'members/' . $key, $params);
-
-    }
-
-
-    // TODO fields validation
-    public function replaceMember($key, array $params)
-    {
-
-        return $this->send('PUT', 'members/' . $key, $params);
-
-    }
-
-    public function replaceMemberGroups($key, array $groups)
-    {
-
-        $params = array(
-            'groups' => implode(',', $groups)
-        );
-
-        return $this->send('PUT', 'members/' . $key . '/groups', $params);
-
-    }
-
-    public function deleteMember($key)
-    {
-
-        return $this->send('DELETE', 'members/' . $key);
-
-    }
-
-    public function unsubscribeMember($key)
-    {
-
-        return $this->send('POST', 'members/unsubscribed/' . $key);
-
-    }
-
-    public function addOptin(array $params)
-    {
-
-        return $this->send('POST', 'members/optins', $params);
-
-    }
-
-    public function addMember(array $params)
-    {
-
-        return $this->send('POST', 'members', $params);
-
-    }
-
-    public function addMemberToGroups($key, array $groups)
-    {
-
-        $params = array(
-            'groups' => implode(',', $groups)
-        );
-
-        return $this->send('POST', 'members/' . $key . '/groups', $params);
-
-    }
-
-    public function getUnsubscribedMember($email)
-    {
-
-        return $this->send('GET', 'members/unsubscribed/' . $email);
-
-    }
-
-    public function getUnsubscribedMembers($page = 1, $limit = 100, $sort = 'email_asc')
-    {
-
-        $params = array(
-            'page' => $page,
-            'limit' => $limit,
-            'sort' => $sort
-        );
-
-        return $this->send('GET', 'members/unsubscribed', $params);
+        return $this->send('GET', 'members/' . $key);
 
     }
 
@@ -365,12 +284,120 @@ class ApiClientV4
 
     }
 
-    public function getGroup($id)
+    public function getUnsubscribedMembers($page = 1, $limit = 100, $sort = 'email_asc')
     {
 
-        return $this->send('GET', 'groups/' . $id);
+        $params = array(
+            'page' => $page,
+            'limit' => $limit,
+            'sort' => $sort
+        );
+
+        return $this->send('GET', 'members/unsubscribed', $params);
 
     }
+
+    public function getUnsubscribedMember($email)
+    {
+
+        return $this->send('GET', 'members/unsubscribed/' . $email);
+
+    }
+
+    public function unsubscribeMember($key)
+    {
+
+        return $this->send('POST', 'members/unsubscribed/' . $key);
+
+    }
+
+    public function addMember(array $params)
+    {
+
+        $required = array('email');
+
+        if ($this->validateParameters($params, $required)) {
+            return $this->send('POST', 'members', $params);
+        }
+
+    }
+
+    // TODO fields validation
+    public function replaceMember($key, array $params)
+    {
+
+        return $this->send('PUT', 'members/' . $key, $params);
+
+    }
+
+    public function editMember($key, array $params)
+    {
+
+        return $this->send('PATCH', 'members/' . $key, $params);
+
+    }
+
+    public function deleteMember($key)
+    {
+
+        return $this->send('DELETE', 'members/' . $key);
+
+    }
+
+    public function getMemberGroups($key, $page = 1, $limit = 100, $sort = 'title_asc')
+    {
+
+        $params = array(
+            'page' => $page,
+            'limit' => $limit,
+            'sort' => $sort
+        );
+
+        return $this->send('GET', 'members/' . $key . '/groups', $params);
+
+    }
+
+    public function addMemberToGroups($key, array $groups)
+    {
+
+        $params = array(
+            'groups' => implode(',', $groups)
+        );
+
+        return $this->send('POST', 'members/' . $key . '/groups', $params);
+
+    }
+
+    // TODO fields validation
+    public function replaceMemberGroups($key, array $groups)
+    {
+
+        $params = array(
+            'groups' => implode(',', $groups)
+        );
+
+        return $this->send('PUT', 'members/' . $key . '/groups', $params);
+
+    }
+
+    public function removeMemberFromGroup($key, $groupId)
+    {
+
+        return $this->send('DELETE', 'members/' . $key . '/groups/' . $groupId);
+
+    }
+
+    public function addOptin(array $params)
+    {
+
+        return $this->send('POST', 'members/optins', $params);
+
+    }
+
+
+    /* -------
+    ------- GROUPS
+    ------- */
 
     public function getGroups($page = 1, $limit = 100, $sort = 'title_asc')
     {
@@ -382,6 +409,13 @@ class ApiClientV4
         );
 
         return $this->send('GET', 'groups', $params);
+
+    }
+
+    public function getGroup($id)
+    {
+
+        return $this->send('GET', 'groups/' . $id);
 
     }
 
@@ -405,18 +439,18 @@ class ApiClientV4
 
     }
 
-    public function editGroup($id, array $params)
-    {
-
-        return $this->send('PATCH', 'groups/' . $id, $params);
-
-    }
-
     // TODO parameters validation
     public function replaceGroup($id, array $params)
     {
 
         return $this->send('PUT', 'groups/' . $id, $params);
+
+    }
+
+    public function editGroup($id, array $params)
+    {
+
+        return $this->send('PATCH', 'groups/' . $id, $params);
 
     }
 
@@ -427,7 +461,12 @@ class ApiClientV4
 
     }
 
-    public function getSentMailings($page = 1, $limit = 100, $sort = 'date_asc')
+
+    /* ------
+    ------ MAILINGS
+    ------ */
+
+    public function getSentMailings($page = 1, $limit = 100, $sort = 'date_desc')
     {
 
         $params = array(
@@ -460,6 +499,13 @@ class ApiClientV4
 
     }
 
+    public function addMailing(array $params)
+    {
+
+        return $this->send('POST', 'mailings', $params);
+
+    }
+
     public function deleteMailing($id)
     {
 
@@ -467,12 +513,10 @@ class ApiClientV4
 
     }
 
-    public function addMailing(array $params)
-    {
 
-        return $this->send('POST', 'mailings', $params);
-
-    }
+    /* -------
+    ----- TEMPLATES
+    ------- */
 
     public function getTemplates($page = 1, $limit = 100, $sort = 'template_asc')
     {
@@ -516,6 +560,11 @@ class ApiClientV4
 
     }
 
+
+    /* -------
+    ----- BATCHES
+    ------- */
+
     public function getBatch($id)
     {
 
@@ -523,12 +572,70 @@ class ApiClientV4
 
     }
 
-    public function addBatch()
+
+    public function batchUnsubscribeMembers(array $keys)
     {
+
+        $params = array(
+            'batchType' => 'unsubscribe',
+            'ids' => $keys
+        );
+
+        return $this->send('POST', 'batches', $params);
 
     }
 
-    private function validateParameters($sentParameters, $requiredParameters)
+    public function batchAddMembers(
+        array $members,
+        array $groups,
+        $relationType = null,
+        $defaultConsentDate = null,
+        $defaultConsentProof = null
+    ) {
+
+        if (is_null($relationType)) {
+            $relationType = self::BATCH_RELATION_MIXED_LIST;
+        }
+
+        if (is_null($defaultConsentDate)) {
+            $defaultConsentDate = date('Y-m-d');
+        }
+
+        if (is_null($defaultConsentProof)) {
+            $defaultConsentProof = 'Added with API';
+        }
+
+        $params = array(
+            'batchType' => 'addMembers',
+            'relationType' => $relationType,
+            'defaultConsentDate' => $defaultConsentDate,
+            'defaultConsentProof' => $defaultConsentProof,
+            'groups' => $groups,
+            'members' => $members
+        );
+
+        return $this->send('POST', 'batches', $params);
+
+    }
+
+
+    /* --------
+    ------ TOKENS
+    -------- */
+
+    public function generateToken()
+    {
+
+        return $this->send('GET', 'tokens/new');
+
+    }
+
+
+    /* --------
+    ----- CLASS METHODS
+    -------- */
+
+    private function validateParameters(array $sentParameters, array $requiredParameters)
     {
 
         $missingParameters = array();
