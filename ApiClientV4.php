@@ -36,18 +36,19 @@ class ApiClientV4
     const COUNT_TEMPLATES = 9;
 
     // Add members batches relation types
-    const BATCH_RELATION_ACTIVE_CLIENT = "active-clients";
-    const BATCH_RELATION_ASSOCIATION_MEMBERS = "association-members";
-    const BATCH_RELATION_BUSINESS_CARD = "business-card";
-    const BATCH_RELATION_CONTEST_PARTICIPANT = "contest-participants";
-    const BATCH_RELATION_EMPLOYEES = "employees";
-    const BATCH_RELATION_EXPRESS_CONSENT = "express-consent";
-    const BATCH_RELATION_INACTIVE_CLIENTS = "inactive-clients";
-    const BATCH_RELATION_INFORMATION_REQUEST = "information-request";
-    const BATCH_RELATION_MIXED_LIST = "mixed-list";
-    const BATCH_RELATION_PARTNERS = "partners";
-    const BATCH_RELATION_PURCHASED_LIST = "purchased-list";
-    const BATCH_RELATION_WEB_CONTACTS = "web-contacts";
+    // Relation types have different consent types
+    const BATCH_RELATION_ACTIVE_CLIENT = "active-clients"; // implied consent
+    const BATCH_RELATION_ASSOCIATION_MEMBERS = "association-members"; // implied consent
+    const BATCH_RELATION_BUSINESS_CARD = "business-card"; // implied consent
+    const BATCH_RELATION_CONTEST_PARTICIPANT = "contest-participants"; // express consent
+    const BATCH_RELATION_EMPLOYEES = "employees"; // implied consent
+    const BATCH_RELATION_EXPRESS_CONSENT = "express-consent"; // express consent
+    const BATCH_RELATION_INACTIVE_CLIENTS = "inactive-clients"; // implied consent
+    const BATCH_RELATION_INFORMATION_REQUEST = "information-request"; // implied consent
+    const BATCH_RELATION_MIXED_LIST = "mixed-list"; // implied consent
+    const BATCH_RELATION_PARTNERS = "partners"; // implied consent
+    const BATCH_RELATION_PURCHASED_LIST = "purchased-list"; // express consent
+    const BATCH_RELATION_WEB_CONTACTS = "web-contacts"; // implied consent
 
     private $user;
     private $password;
@@ -595,6 +596,24 @@ class ApiClientV4
 
         if (is_null($relationType)) {
             $relationType = self::BATCH_RELATION_MIXED_LIST;
+        } else {
+            if (!in_array($relationType, array(
+                self::BATCH_RELATION_ACTIVE_CLIENT,
+                self::BATCH_RELATION_ASSOCIATION_MEMBERS,
+                self::BATCH_RELATION_BUSINESS_CARD,
+                self::BATCH_RELATION_CONTEST_PARTICIPANT,
+                self::BATCH_RELATION_EMPLOYEES,
+                self::BATCH_RELATION_EXPRESS_CONSENT,
+                self::BATCH_RELATION_INACTIVE_CLIENTS,
+                self::BATCH_RELATION_INFORMATION_REQUEST,
+                self::BATCH_RELATION_MIXED_LIST,
+                self::BATCH_RELATION_PARTNERS,
+                self::BATCH_RELATION_PURCHASED_LIST,
+                self::BATCH_RELATION_WEB_CONTACTS
+            ))
+            ) {
+                throw new Exception('Invalid relation type. Make sure to use a valid constant as parameter.');
+            }
         }
 
         if (is_null($defaultConsentDate)) {
